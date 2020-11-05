@@ -10,10 +10,9 @@ import java.nio.channels.SelectionKey;
  * @since 2020-11-05 16:14
  */
 public class SubEventLoop extends EventLoop {
-    @Override
-    public void handler(SelectionKey selectionKey) throws Exception {
-        if(selectionKey.isReadable()) {
 
-        }
+    @Override
+    public void initHandler() {
+
     }
 }

@@ -1,6 +1,8 @@
 package service.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * TODO
@@ -9,11 +11,10 @@ import lombok.Data;
  * @since 2020-11-05 9:51
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class MsgObj {
-    private String msg;
-    private Integer state;
-    private Integer close;
     private String user;
-    private String ip;
     private ClientAction clientAction;
+    private String msg;
 }

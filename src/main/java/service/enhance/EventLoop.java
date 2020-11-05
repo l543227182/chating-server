@@ -1,14 +1,13 @@
 package service.enhance;
 
+import service.enhance.handlers.Handler;
+
 import java.io.IOException;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -22,11 +21,13 @@ public abstract class EventLoop extends Thread {
     protected Selector selector;
     protected final Queue<Runnable> tailTasks = new LinkedBlockingQueue(1024);
     public volatile boolean running = false;
-    private Handler handler;
+    private List<Handler> handlers;
 
     public EventLoop() {
         try {
             this.selector = Selector.open();
+            this.handlers = new LinkedList();
+            this.initHandler();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -65,19 +66,30 @@ public abstract class EventLoop extends Thread {
         this.start();
     }
 
-    public void handler(SelectionKey selectableChannel) {
-        if (Objects.nonNull(handler)) {
-            Handler next = handler;
-            while (Objects.nonNull(next)) {
-                next.handler(selectableChannel);
+    public void handler(SelectionKey selectionKey) {
+        if (Objects.nonNull(handlers)) {
+            Iterator<Handler> next = handlers.iterator();
+            Object result = null;
+            while (next.hasNext()) {
+                Handler handler = next.next();
+                result = handler.handler(selectionKey, result);
             }
         }
     }
 
     public abstract void initHandler();
 
+    public void addHandler(Handler handler) {
+        this.handlers.add(handler);
+    }
+
     public void registerChannel(SelectableChannel selectableChannel, int ops) {
         FutureTask<SelectionKey> futureTask = new FutureTask<>(() -> selectableChannel.register(selector, ops, selectableChannel));
         this.tailTasks.add(futureTask);
+        try {
+            futureTask.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
