@@ -31,7 +31,7 @@ public class ReadMsgHandler implements Handler {
                 requestBuffer.flip();
                 byte[] content = new byte[requestBuffer.limit()];
                 requestBuffer.get(content);
-                return new String(content);
+                return new String(content,"UTF-8");
             } catch (Exception e) {
                 selectionKey.cancel();
                 e.printStackTrace();

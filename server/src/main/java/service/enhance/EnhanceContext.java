@@ -33,7 +33,7 @@ public class EnhanceContext {
     public static Set<SelectionKey> fetchCurrentClientSelectKey() {
         Set<SelectionKey> selectionKeySets = new HashSet<>();
         for (Selector allSelector : allSelectors) {
-            Set<SelectionKey> selectionKeys = allSelector.selectedKeys();
+            Set<SelectionKey> selectionKeys = allSelector.keys();
             selectionKeys.forEach(item -> {
                 if (!serverSelect.contains(item)) {
                     selectionKeySets.add(item);

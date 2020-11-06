@@ -19,7 +19,7 @@ public class EnhanceServer {
     private ServerSocketChannel serverSocketChannel;
 
     EventLoopGroup boss = new EventLoopGroup(true, 1);
-    EventLoopGroup work = new EventLoopGroup(false, 10);
+    EventLoopGroup work = new EventLoopGroup(false, 1);
 
     public static void main(String[] args) {
         EnhanceServer enhanceServer = new EnhanceServer();

@@ -17,7 +17,7 @@ public class MsgEncode {
     private final static String SPLIT = "#";
 
     public static String encodeMsg(MsgObj msgObj) {
-        List<String> msg = new ArrayList<>(4);
+        List<String> msg = new ArrayList< >(4);
         if (StringUtils.isNotEmpty(msgObj.getUser())) {
             msg.add(msgObj.getUser());
         }

@@ -34,8 +34,8 @@ public class WriteMsgHandler implements Handler {
                         msg.setMsg(gson.toJson(EnhanceContext.users));
                     }
                     SocketChannel channel = (SocketChannel) selectionKey.channel();
-                    channel.write(ByteBuffer.wrap(MsgEncode.encodeMsg(msg).getBytes()));
-                    selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
+                    channel.write(ByteBuffer.wrap(MsgEncode.encodeMsg(msg).getBytes("UTF-8")));
+                    selectionKey.interestOps(SelectionKey.OP_READ);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

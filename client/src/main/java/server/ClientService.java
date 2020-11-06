@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.Objects;
 
 public class ClientService {
-    private static final String HOST = "127.0.0.1";
-    private static final int PORT = 8899;
+    private static String HOST = "127.0.0.1";
+    private static int PORT = 8899;
     private static SocketChannel sc;
 
     private static Object lock = new Object();
@@ -30,6 +31,18 @@ public class ClientService {
     private ClientService() throws IOException {
         sc = SocketChannel.open();
         sc.configureBlocking(false);
+
+        String setPort = System.getProperty("port");
+        if (Objects.nonNull(setPort)) {
+            PORT = Integer.valueOf(setPort);
+        }
+
+        String setHost = System.getProperty("host");
+        if (Objects.nonNull(setHost)) {
+            HOST = setHost;
+        }
+        System.out.println(HOST);
+        System.out.println(PORT);
         sc.connect(new InetSocketAddress(HOST, PORT));
     }
 
@@ -37,7 +50,7 @@ public class ClientService {
         try {
             while (!sc.finishConnect()) {
             }
-            sc.write(ByteBuffer.wrap(msg.getBytes()));
+            sc.write(ByteBuffer.wrap(msg.getBytes("UTF-8")));
         } catch (IOException e) {
             e.printStackTrace();
         }
