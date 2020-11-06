@@ -1,8 +1,9 @@
 package service.enhance;
 
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
+import service.enhance.handlers.Handler;
+
+import java.io.IOException;
+import java.nio.channels.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -18,11 +19,14 @@ public class EventLoopGroup {
 
     private final AtomicInteger idx = new AtomicInteger();
 
+    private boolean mainLoop = false;
+
     public EventLoopGroup(boolean mainLoop, int size) {
         if (size == 0) {
             return;
         }
         this.size = size;
+        this.mainLoop = mainLoop;
         if (mainLoop) {
             eventLoops = new MainEventLoop[size];
             for (int i = 0; i < size; i++) {
@@ -55,7 +59,24 @@ public class EventLoopGroup {
      *
      * @param serverSocketChannel
      */
-    public void registerChannel(ServerSocketChannel serverSocketChannel) {
-        this.next().registerChannel(serverSocketChannel, SelectionKey.OP_ACCEPT);
+    public void registerChannel(SelectableChannel serverSocketChannel) {
+        if (mainLoop) {
+            SelectionKey selectionKey = this.next().registerChannel(serverSocketChannel, SelectionKey.OP_ACCEPT);
+            EnhanceContext.addServerSelectKey(selectionKey);
+        } else {
+            SelectionKey selectionKey = this.next().registerChannel(serverSocketChannel, SelectionKey.OP_READ);
+            SocketChannel channel = (SocketChannel) selectionKey.channel();
+            try {
+                System.out.println(Thread.currentThread().getName() + "收到新连接 : " + channel.getRemoteAddress());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void addFirstHandler(Handler handler) {
+        for (EventLoop eventLoop : eventLoops) {
+            eventLoop.addFirstHandler(handler);
+        }
     }
 }

@@ -1,7 +1,8 @@
-package service.decode;
+package decode;
 
-import service.domain.ClientAction;
-import service.domain.MsgObj;
+
+import domain.ClientAction;
+import domain.MsgObj;
 
 import java.util.Objects;
 
@@ -13,20 +14,21 @@ import java.util.Objects;
  */
 public class MsgDecode {
 
-    public MsgObj decodeMsg(String content) {
-        if (Objects.isNull(content)) {
+    public static MsgObj decodeMsg(String content) {
+        if (Objects.nonNull(content)) {
 
             String[] msgPiece = content.split("#");
             if (msgPiece.length == 3) {
                 String user = msgPiece[0];
                 String action = msgPiece[1];
-                String userMsg = msgPiece[3];
+                String userMsg = msgPiece[2];
                 return new MsgObj(user, ClientAction.valueOf(action), userMsg);
             } else if (msgPiece.length == 2) {
                 String user = msgPiece[0];
                 String action = msgPiece[1];
                 return new MsgObj(user, ClientAction.valueOf(action), null);
             }
+            throw new RuntimeException("不可解析的信息");
         }
         return new MsgObj();
     }

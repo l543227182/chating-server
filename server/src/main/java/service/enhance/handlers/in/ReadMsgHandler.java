@@ -1,7 +1,8 @@
-package service.enhance.handlers;
+package service.enhance.handlers.in;
+
+import service.enhance.handlers.Handler;
 
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
@@ -14,7 +15,7 @@ import java.nio.channels.SocketChannel;
 public class ReadMsgHandler implements Handler {
     @Override
     public Object handler(SelectionKey selectionKey, Object handleObj) {
-        if (selectionKey.isAcceptable()) {
+        if (selectionKey.isReadable()) {
             try {
                 SocketChannel ch = (SocketChannel) selectionKey.channel();
                 ByteBuffer requestBuffer = ByteBuffer.allocate(1024);
@@ -32,6 +33,7 @@ public class ReadMsgHandler implements Handler {
                 requestBuffer.get(content);
                 return new String(content);
             } catch (Exception e) {
+                selectionKey.cancel();
                 e.printStackTrace();
             }
         }

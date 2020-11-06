@@ -21,7 +21,7 @@ public abstract class EventLoop extends Thread {
     protected Selector selector;
     protected final Queue<Runnable> tailTasks = new LinkedBlockingQueue(1024);
     public volatile boolean running = false;
-    private List<Handler> handlers;
+    private LinkedList<Handler> handlers;
 
     public EventLoop() {
         try {
@@ -41,7 +41,7 @@ public abstract class EventLoop extends Thread {
                 task.run();
             }
             try {
-                int select = this.selector.select(1000 * 3);
+                int select = this.selector.select(1000);
                 if (select > 0) {
                     Iterator<SelectionKey> iterator = this.selector.selectedKeys().iterator();
                     while (iterator.hasNext()) {
@@ -83,13 +83,19 @@ public abstract class EventLoop extends Thread {
         this.handlers.add(handler);
     }
 
-    public void registerChannel(SelectableChannel selectableChannel, int ops) {
+    public void addFirstHandler(Handler handler) {
+        this.handlers.addFirst(handler);
+    }
+
+    public SelectionKey registerChannel(SelectableChannel selectableChannel, int ops) {
         FutureTask<SelectionKey> futureTask = new FutureTask<>(() -> selectableChannel.register(selector, ops, selectableChannel));
         this.tailTasks.add(futureTask);
+        SelectionKey selectionKey = null;
         try {
-            futureTask.get();
+            selectionKey = futureTask.get();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return selectionKey;
     }
 }

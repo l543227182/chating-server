@@ -1,6 +1,5 @@
-package service.domain;
+package domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,10 +10,16 @@ import lombok.NoArgsConstructor;
  * @since 2020-11-05 9:51
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class MsgObj {
     private String user;
     private ClientAction clientAction;
     private String msg;
+
+    public MsgObj(String user, ClientAction clientAction, String msg) {
+        this.user = user;
+        this.clientAction = clientAction;
+        this.msg = msg;
+    }
+
 }

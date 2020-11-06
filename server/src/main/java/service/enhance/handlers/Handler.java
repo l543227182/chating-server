@@ -10,6 +10,5 @@ import java.nio.channels.SelectionKey;
  */
 public interface Handler<T> {
     int inStream = 1;
-
     Object handler(SelectionKey selectionKey, T handleObj);
 }

@@ -1,4 +1,4 @@
-package service.domain;
+package domain;
 
 /**
  * TODO
@@ -7,5 +7,7 @@ package service.domain;
  * @since 2020-11-05 9:53
  */
 public enum ClientAction {
-    ON_LINE,BYE_BYE,SAY_SOMETHING
+    ON_LINE, BYE_BYE, SAY_SOMETHING,
+    REFRESH_USER, CHATTING_MSG
+
 }
