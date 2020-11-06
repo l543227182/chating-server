@@ -64,7 +64,7 @@ public class ClientService {
         String msg = null;
         try {
             while ((count = sc.read(buffer)) > 0) {
-                sb.append(new String(buffer.array(), 0, count));
+                sb.append(new String(buffer.array(), 0, count,"UTF-8"));
             }
             if (sb.length() > 0) {
                 msg = sb.toString();
